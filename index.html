@@ -5,32 +5,71 @@
 <!--[if gt IE 8]><!--> <html lang="en-us" class="no-js"> <!--<![endif]-->
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" >
-  
-    <title dir="ltr">HTML5 Boilerplate - A rock-solid default template for HTML5 awesome.</title>
-
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1">
+    <title dir="ltr">Amazon Affiliate + bit.ly Bookmarklets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   </head>
   <body>
-    Drag the link to your bookmarks bar. :)
+    <div class="tagEntry">
+    <label for="tag">Enter your Amazon Affiliate Tag here:</label>
+      <input id="tag" name="tag" type="text" />
+    </div>
     <p>
-      <a href="">Stoyan Stefanov's original affiliate bookmarklet</a> below, for convenience.
-      <a href="javascript:if(document.getElementById("ASIN"))window.location="http://www.amazon.com/dp/"+document.getElementById("ASIN").value+"/?tag=325iorg-20";else alert("Can't find the product ID");">Affiliate-ify current page</a>
-      Remember to modify the part that says "tag=325iorg-20" to use your affiliate code instead. :)
+      Install this bookmarklet by dragging the link below to your bookmarks bar:
+      <a id="stoyan" href class="bookmarklet">Amazon Affiliate Bookmarklet</a>
+      <hr/>
+      <a href="http://www.phpied.com/short-amazon-affiliate-links-a-bookmarklet/"> Stoyan Stefanov 's original affiliate bookmarklet</a> below, for convenience.
+      <script src="http://gist-it.appspot.com/github/mjc/amazon-affiliate-bookmarklet/raw/master/affiliatebookmarklet-stoyan.js"></script>
     </p>
     <p>
+      Install this bookmarklet by dragging the link below to your bookmarks bar:
+      <a id="mjc1" href class="bookmarklet">Amazon Affiliate Bookmarklet</a>
+      <hr/>
       My version (works with Amazon Wireless, and pretty much any other amazon page that I could find:
-      (TODO: find it and paste it in :( )
-      <a href="">Enhanced Amazon Affiliate-ify</a>
+      <script src="http://gist-it.appspot.com/github/mjc/amazon-affiliate-bookmarklet/raw/master/affiliatebookmarklet-mjc1.js"></script>
     </p>
     <p>
-      <a href="http://bitly.com/pages/tools">Bit.ly's "shorten and track your amazon affiliate links" bookmarklet</a>, which only works on the output of <a href="https://affiliate-program.amazon.com/gp/associates/network/build-links/individual/main.html">Amazon's link builder</a>
-      <a href="javascript:if(document.getElementById('static_txt_preview')){document.location.href="http://bit.ly/?u="+encodeURIComponent(document.getElementById('static_txt_preview').href);}else{alert("This bookmarklet only works on the Amazon Link Builder Page!");};">Bit.ly Amazon Affiliate</a>
+      Install this bookmarklet by dragging the link below to your bookmarks bar:
+      <a id="bitly" href class="bookmarklet">Amazon Affiliate Bookmarklet</a>
+      <hr/>
+      <a href="http://bitly.com/pages/tools">Bit.ly's "shorten and track your amazon affiliate links" bookmarklet </a>, which only works on the output of
+      <a href="https://affiliate - program.amazon.com/gp/associates/network/build-links/individual/main.html">Amazon's link builder</a>
+      <script src="http://gist-it.appspot.com/github/mjc/amazon-affiliate-bookmarklet/raw/master/affiliatebookmarklet-bitly.js"></script>
     </p>
     <p>
-      My version of bit.ly's script (amalgamation of it and mine, works on almost any amazon page)
+      Install this bookmarklet by dragging the link below to your bookmarks bar:
+      <a id="mjc2" href>Amazon Affiliate Bookmarklet</a > < hr / > My version of bit.ly 's script (amalgamation of it and mine, works on almost any amazon page)
       (TODO: not done yet :P)
       <a href="">Enhanced Bit.ly Amazon Affiliate-ify</a>
     </p>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        window.bmCode = {};
+        var bookmarklets = $(".bookmarklet");
+        bookmarklets.each(function() {
+          //$.get("affiliatebookmarklet-" + this.id + ".js",function(data) {});
+          window.bmCode[this.id] = $.ajax({type: "GET",
+                  url: "affiliatebookmarklet-" + this.id + ".js",
+                  dataType: "text",
+                  async:false}).responseText;
+        });
+        $("#tag").blur(function() {
+          bookmarklets.each(function() {
+            var replaced = window.bmCode[this.id].replace("325iorg-20",$("#tag").val());
+            this.href = "javascript:" + encodeURIComponent($.ajax({type: "POST",
+                    url: "http://closure-compiler.appspot.com/compile",
+                    data: {
+                      js_code: replaced,
+                      compilation_level: "ADVANCED_OPTIMIZATIONS",
+                      output_format: "text",
+                      output_info: "compiled_code",
+                    },
+                    async: false
+                  }).responseText);
+            });  
+          });
+        });
+    </script>
   </body>
 </html>
