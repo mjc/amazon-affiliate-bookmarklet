@@ -51,28 +51,31 @@
         window.bmCode = {};
         var bookmarklets = $(".bookmarklet");
         bookmarklets.each(function() {
+          console.log("start " + this.id);
           //$.get("affiliatebookmarklet-" + this.id + ".js",function(data) {});
-          window.bmCode[this.id] = $.ajax({type: "GET",
-                  url: "affiliatebookmarklet-" + this.id + ".js",
-                  dataType: "text",
-                  async:false}).responseText;
-        });
-        $("#tag").blur(function() {
-          bookmarklets.each(function() {
-            var replaced = window.bmCode[this.id].replace("325iorg-20",$("#tag").val());
-            this.href = "javascript:" + encodeURIComponent($.ajax({type: "POST",
+          window.bmCode[this.id] = "javascript:" + encodeURIComponent($.ajax({type: "POST",
                     url: "http://closure-compiler.appspot.com/compile",
                     data: {
-                      js_code: replaced,
+                      js_code: $.ajax({type: "GET",
+                                       url: "affiliatebookmarklet-" + this.id + ".js",
+                                       dataType: "text",
+                                       async:false
+                                       }).responseText,
                       compilation_level: "ADVANCED_OPTIMIZATIONS",
                       output_format: "text",
                       output_info: "compiled_code",
                     },
                     async: false
                   }).responseText);
-            });  
+        this.href = window.bmCode[this.id];
+        });
+        $("#tag").blur(function() {
+          bookmarklets.each(function() {
+            var replaced = window.bmCode[this.id].replace("325iorg-20",$("#tag").val());
+            $(this).href = replaced;  
           });
         });
+      });
     </script>
   </body>
 </html>
